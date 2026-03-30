@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPUS — Task Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader" class="loader">
+    <div class="loader-inner">
+      <span class="loader-word">OPUS</span>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Notification Permission Banner -->
+  <div id="notif-banner" class="notif-banner hidden">
+    <i class="fa-solid fa-bell"></i>
+    <span>Enable notifications to get deadline reminders</span>
+    <button id="enable-notif">Enable</button>
+    <button id="dismiss-notif"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+  <!-- App Shell -->
+  <div class="app" id="app">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">OPUS</span>
+        <span class="logo-tag">task intelligence</span>
+      </div>
+      <div class="header-center">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="search-input" placeholder="Search tasks…" autocomplete="off" />
+          <kbd>⌘K</kbd>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="focus-toggle" class="btn-icon" title="Focus Mode — show only high priority">
+          <i class="fa-solid fa-crosshairs"></i>
+          <span>Focus</span>
+        </button>
+        <button id="theme-toggle" class="btn-icon" title="Toggle theme">
+          <i class="fa-solid fa-circle-half-stroke"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- SMART BANNER -->
+    <div id="smart-banner" class="smart-banner"></div>
+
+    <!-- MAIN LAYOUT -->
+    <main class="main">
+
+      <!-- SIDEBAR DASHBOARD -->
+      <aside class="sidebar">
+        <div class="dash-header">Dashboard</div>
+
+        <div class="stat-card" id="stat-completion">
+          <div class="stat-label">Completion Rate</div>
+          <div class="stat-value" id="completion-pct">0%</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-mini">
+            <div class="stat-mini-val" id="stat-total">0</div>
+            <div class="stat-mini-label">Total</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-val" id="stat-pending">0</div>
+            <div class="stat-mini-label">Pending</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-val" id="stat-today">0</div>
+            <div class="stat-mini-label">Due Today</div>
+          </div>
+        </div>
+
+        <div class="stat-mini-full">
+          <div class="stat-mini-val high-col" id="stat-overdue">0</div>
+          <div class="stat-mini-label">Overdue</div>
+        </div>
+
+        <div class="priority-breakdown">
+          <div class="pb-label">Priority Breakdown</div>
+          <div class="pb-row"><span class="dot high"></span><span>High</span><span id="pb-high" class="pb-count">0</span></div>
+          <div class="pb-row"><span class="dot med"></span><span>Medium</span><span id="pb-med" class="pb-count">0</span></div>
+          <div class="pb-row"><span class="dot low"></span><span>Low</span><span id="pb-low" class="pb-count">0</span></div>
+        </div>
+
+        <div class="kbd-hints">
+          <div class="kh-title">Shortcuts</div>
+          <div class="kh-row"><kbd>Enter</kbd> Add task</div>
+          <div class="kh-row"><kbd>⌘K</kbd> Focus search</div>
+          <div class="kh-row"><kbd>F</kbd> Focus mode</div>
+          <div class="kh-row"><kbd>Esc</kbd> Clear search</div>
+        </div>
+      </aside>
+
+      <!-- TASK AREA -->
+      <section class="task-area">
+
+        <!-- Filters & Sort -->
+        <div class="controls">
+          <div class="filter-btns">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="pending">Pending</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+            <button class="filter-btn" data-filter="high">High Priority</button>
+            <button class="filter-btn" data-filter="overdue">Overdue</button>
+          </div>
+          <div class="sort-wrap">
+            <i class="fa-solid fa-arrow-down-wide-short"></i>
+            <select id="sort-select">
+              <option value="created-desc">Newest First</option>
+              <option value="created-asc">Oldest First</option>
+              <option value="deadline-asc">Deadline ↑</option>
+              <option value="deadline-desc">Deadline ↓</option>
+              <option value="priority-high">Priority: High→Low</option>
+              <option value="priority-low">Priority: Low→High</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Task List -->
+        <div id="task-list" class="task-list">
+          <!-- Tasks render here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state hidden">
+          <div class="empty-icon">✦</div>
+          <div class="empty-title">No tasks found</div>
+          <div class="empty-sub">Add one below to get started</div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- ADD TASK PANEL -->
+    <footer class="add-panel" id="add-panel">
+      <div class="add-panel-inner">
+        <button class="add-toggle" id="add-toggle">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Task</span>
+        </button>
+
+        <div class="add-form" id="add-form">
+          <div class="form-row main-row">
+            <input type="text" id="task-title" placeholder="Task title…" maxlength="120" autocomplete="off" />
+          </div>
+          <div class="form-row">
+            <textarea id="task-desc" placeholder="Description (optional)…" rows="2" maxlength="500"></textarea>
+          </div>
+          <div class="form-row meta-row">
+            <div class="meta-group">
+              <label>Priority</label>
+              <div class="priority-selector" id="priority-selector">
+                <button class="pri-btn" data-val="low"><span class="dot low"></span>Low</button>
+                <button class="pri-btn active" data-val="medium"><span class="dot med"></span>Medium</button>
+                <button class="pri-btn" data-val="high"><span class="dot high"></span>High</button>
+              </div>
+            </div>
+            <div class="meta-group">
+              <label>Deadline</label>
+              <input type="datetime-local" id="task-deadline" />
+            </div>
+            <div class="meta-group">
+              <label>Recurring</label>
+              <select id="task-recurring">
+                <option value="none">None</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+              </select>
+            </div>
+            <button class="btn-primary" id="submit-task">
+              <i class="fa-solid fa-arrow-up"></i>
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /.app -->
+
+  <!-- EDIT MODAL -->
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <span>Edit Task</span>
+        <button id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id" />
+        <div class="form-row">
+          <label>Title</label>
+          <input type="text" id="edit-title" maxlength="120" />
+        </div>
+        <div class="form-row">
+          <label>Description</label>
+          <textarea id="edit-desc" rows="3" maxlength="500"></textarea>
+        </div>
+        <div class="form-row meta-row">
+          <div class="meta-group">
+            <label>Priority</label>
+            <div class="priority-selector" id="edit-priority-selector">
+              <button class="pri-btn" data-val="low"><span class="dot low"></span>Low</button>
+              <button class="pri-btn" data-val="medium"><span class="dot med"></span>Medium</button>
+              <button class="pri-btn" data-val="high"><span class="dot high"></span>High</button>
+            </div>
+          </div>
+          <div class="meta-group">
+            <label>Deadline</label>
+            <input type="datetime-local" id="edit-deadline" />
+          </div>
+          <div class="meta-group">
+            <label>Recurring</label>
+            <select id="edit-recurring">
+              <option value="none">None</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" id="cancel-edit">Cancel</button>
+        <button class="btn-primary" id="save-edit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
